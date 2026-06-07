@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: sr4ipr-crm-view
+    runtime: node
+    repo: https://github.com/harshitasood1254-source/sr4ipr-crm-view
+    plan: free
+    envVars:
+      - key: PORT
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: NODE_ENV
+        sync: false
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeployTrigger: commit

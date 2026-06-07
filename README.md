@@ -93,7 +93,48 @@ Test login: himanshu@sr4ipr.in / Sr4ipr@2025
 
 ---
 
-## Deploying to Railway (go live at crm.sr4ipr.in)
+## Deploying to Render (free)
+
+The repo now includes a Render blueprint file, so you can deploy this app with a free Postgres add-on in a few minutes.
+
+### Option A — One-click Render deploy
+1. Push this repo to GitHub.
+2. In Render, click New → Blueprint.
+3. Connect the GitHub repo and select this project.
+4. Render will create:
+   - one free Web Service for the Node app
+   - one free Postgres database
+5. After the first deploy finishes, open the web service shell and run:
+   ```bash
+   psql "$DATABASE_URL" -f db/schema.sql
+   npm run seed
+   ```
+   If Render shows the Postgres value as masked or blank in the shell, that is normal. Use the database service's Internal Database URL / Connection String value from the Render dashboard, and paste it into the web service's `DATABASE_URL` environment variable.
+6. Visit the generated Render URL.
+
+### Option B — Manual Render setup
+1. Create a Web Service (Node) and point it to this repo.
+2. Set the build command to `npm install`.
+3. Set the start command to `npm start`.
+4. Add the environment variables:
+   ```env
+   NODE_ENV=production
+   JWT_SECRET=replace-with-a-long-random-secret
+   PORT=10000
+   ```
+5. Create a free Postgres database and copy its Internal Database URL / Connection String into the web service variables as `DATABASE_URL`.
+6. Run the schema + seed in the Render shell:
+   ```bash
+   psql "$DATABASE_URL" -f db/schema.sql
+   npm run seed
+   ```
+   If Render masks the value in the shell, that is normal; the actual connection string is still being used by the app.
+
+> Render’s free tier is suitable for testing and small internal use. The database will be attached automatically when you use the included render.yaml blueprint.
+
+---
+
+## Deploying to Railway (older notes)
 
 ### Step 1 — Push code to GitHub
 ```bash
@@ -126,8 +167,8 @@ NODE_ENV=production
 In Railway → your app service → click Deploy Logs
 After first deploy, open the Railway shell:
 ```bash
-node db/schema.sql   # or run via psql with Railway DATABASE_URL
-node db/seed.js
+psql "$DATABASE_URL" -f db/schema.sql
+npm run seed
 ```
 
 ### Step 6 — Connect custom domain
