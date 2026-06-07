@@ -5,6 +5,7 @@ require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
 const path    = require('path');
+const initializeDatabase = require('./db/init');
 
 const app = express();
 
@@ -41,7 +42,16 @@ app.use((err, req, res, next) => {
 
 // ── START ──────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`SR4IPR CRM running on port ${PORT}`);
-  console.log(`Open: http://localhost:${PORT}`);
-});
+
+(async () => {
+  try {
+    await initializeDatabase();
+    app.listen(PORT, () => {
+      console.log(`SR4IPR CRM running on port ${PORT}`);
+      console.log(`Open: http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to initialize database schema:', err.message);
+    process.exit(1);
+  }
+})();
